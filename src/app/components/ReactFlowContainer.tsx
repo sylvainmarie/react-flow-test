@@ -266,7 +266,7 @@ const ReactFlowContainer = () => {
         fitView
       >
         <Controls />
-        <MiniMap />
+        <MiniMap zoomable pannable />
         {/*// @ts-ignore*/}
         <Background variant="lines" gap={12} size={1} />
         <Panel position="top-left" className="flex items-center justify-center">
