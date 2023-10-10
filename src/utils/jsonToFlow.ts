@@ -249,12 +249,12 @@ export const getEdgesData = (jsonDataEdge: ExcelConvertedJsonEdge[]) => {
   const formattedEdges: Edge[] = [];
 
   jsonDataEdge.forEach((edge) => {
-    const { NodeUpstream, NodeDownstream, Label, "Use case": useCase } = edge;
+    const { NodeSource, NodeTarget, Label, "Use case": useCase } = edge;
 
     formattedEdges.push({
-      id: `e${NodeDownstream}-${NodeUpstream}`,
-      source: NodeDownstream?.toString(),
-      target: NodeUpstream?.toString(),
+      id: `e${NodeTarget}-${NodeSource}`,
+      source: NodeTarget?.toString(),
+      target: NodeSource?.toString(),
       animated: false,
       data: { label: Label },
     });

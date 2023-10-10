@@ -54,8 +54,8 @@ export interface ExcelConvertedJsonNode {
 }
 
 export interface ExcelConvertedJsonEdge {
-  NodeDownstream: number;
-  NodeUpstream: number;
+  NodeSource: number;
+  NodeTarget: number;
   "Use case": string;
   Label: string;
 }
