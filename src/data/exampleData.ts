@@ -12,7 +12,7 @@ export const exampleJsonFormatted: {
         y: 200,
       },
       data: {
-        label: "Groupe 1",
+        label: "Group 1",
       },
       type: "Group",
       style: {
