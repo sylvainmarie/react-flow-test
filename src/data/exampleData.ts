@@ -123,21 +123,21 @@ export const exampleJsonFormatted: {
       id: "e1-2",
       source: "1",
       target: "2",
-      animated: false,
+      type: 'smoothstep',
       label: "Shared"
     },
     {
       id: "e4-1",
       source: "4",
       target: "1",
-      animated: false,
+      type: 'smoothstep',
         label: "Shared"
     },
     {
       id: "e2-3",
       source: "2",
       target: "3",
-      animated: false,
+      type: 'smoothstep',
         label: "Shared"
     }
   ],
