@@ -14,7 +14,7 @@ export const exampleJsonFormatted: {
       data: {
         label: "Group 1",
       },
-      type: "Group",
+      type: "group",
       style: {
         width: 500,
         height: 120,
@@ -62,7 +62,7 @@ export const exampleJsonFormatted: {
       data: {
         label: "Group 2",
       },
-      type: "Group",
+      type: "group",
       style: {
         width: 200,
         height: 120,
@@ -94,7 +94,7 @@ export const exampleJsonFormatted: {
       data: {
         label: "Group 3",
       },
-      type: "Group",
+      type: "group",
       style: {
         width: 200,
         height: 120,
