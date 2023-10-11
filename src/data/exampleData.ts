@@ -115,8 +115,8 @@ export const exampleJsonFormatted: {
       parentNode: "Group 3",
       style: {
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-      },
-    },
+      }
+    }
   ],
   edges: [
     {
@@ -131,14 +131,14 @@ export const exampleJsonFormatted: {
       source: "4",
       target: "1",
       type: 'smoothstep',
-        label: "Shared"
+      label: "Work In Progress"
     },
     {
       id: "e2-3",
       source: "2",
       target: "3",
       type: 'smoothstep',
-        label: "Shared"
+      label: "Published"
     }
-  ],
+  ]
 };
