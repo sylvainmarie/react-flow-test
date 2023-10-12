@@ -8,7 +8,6 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Background,
-  addEdge,
   MiniMap,
   Controls,
   applyEdgeChanges,
@@ -24,7 +23,6 @@ import { ExcelConvertedJson } from "@/app/types/interface";
 
 import "reactflow/dist/style.css";
 import { ToastContainer, toast } from "react-toastify";
-import { Button, Select, SelectItem, Title } from "@tremor/react";
 import { OutputJsonFromExcelToReactFlow } from "@/utils/jsonToFlow";
 
 type NodeType = "Group" | "input" | "output" | "default" | "resizeRotate";
@@ -184,11 +182,6 @@ const ReactFlowContainer = () => {
   const closeModal = () => setChildrenModelIsOpen(false);
   const openModal = () => setChildrenModelIsOpen(true);
 
-  const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
-  );
-
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes]
@@ -198,36 +191,7 @@ const ReactFlowContainer = () => {
     [setEdges]
   );
 
-  const onAdd = useCallback(
-    (type: NodeType) => {
-      const newNodes = [...nodes];
-
-      const newNode = {
-        id: getId(nodes.length, type),
-        data: { label: type === "Group" ? "" : getId(nodes.length, type) },
-        type: type,
-        position: {
-          x: Math.random() * window.innerWidth - 500,
-          y: Math.random() * window.innerHeight,
-        },
-        style: {},
-      };
-
-      if (type === "Group") {
-        newNode.style = {
-          backgroundColor: "rgba(240,240,240,0.25)",
-          width: 300,
-          height: 200,
-          padding: 10,
-        };
-      }
-
-      newNodes.push(newNode as Node);
-      setNodes(newNodes);
-    },
-    [setNodes, nodes]
-  );
-
+  
   return (
     <div
       style={{ width: "100vw", height: "100vh" }}
@@ -262,29 +226,13 @@ const ReactFlowContainer = () => {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
         fitView
       >
         <Controls />
         <MiniMap zoomable pannable />
         {/*// @ts-ignore*/}
         <Background variant="lines" gap={12} size={1} />
-        <Panel position="top-left" className="flex items-center justify-center">
-          <Select
-            placeholder="Add node"
-            onValueChange={(value) => onAdd(value as NodeType)}
-          >
-            <SelectItem value="default">Default Node</SelectItem>
-            <SelectItem value="input">Input Node</SelectItem>
-            <SelectItem value="output">Output Node</SelectItem>
-            <SelectItem value="Group">Group</SelectItem>
-          </Select>
-          {nodes.length === 0 && (
-            <Title color="red" className="w-[300px] pl-3">
-              Please add data
-            </Title>
-          )}
-        </Panel>
+ 
       </ReactFlow>
     </div>
   );
