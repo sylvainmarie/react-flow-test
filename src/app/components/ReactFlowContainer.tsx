@@ -5,6 +5,7 @@ import ELK from "elkjs";
 import React, { useCallback, useState, useEffect } from "react";
 import IconContainer from "./IconContainer";
 import ReactFlow, {
+  ReactFlowProvider,
   useNodesState,
   useEdgesState,
   Background,
@@ -238,4 +239,9 @@ const ReactFlowContainer = () => {
   );
 };
 
-export default ReactFlowContainer;
+export default () => (
+  <ReactFlowProvider>
+    <ReactFlowContainer />
+  </ReactFlowProvider>
+);
+
