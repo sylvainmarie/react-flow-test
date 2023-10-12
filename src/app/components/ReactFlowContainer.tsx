@@ -20,10 +20,10 @@ import Modal from "./Modal";
 import UploadFile from "@/app/components/UploadFile";
 import { getReactFlowFromJson } from "@/utils/jsonToFlow";
 import { ExcelConvertedJson } from "@/app/types/interface";
-
-import "reactflow/dist/style.css";
 import { ToastContainer, toast } from "react-toastify";
 import { OutputJsonFromExcelToReactFlow } from "@/utils/jsonToFlow";
+
+import "reactflow/dist/style.css";
 
 type NodeType = "Group" | "input" | "output" | "default" | "resizeRotate";
 
