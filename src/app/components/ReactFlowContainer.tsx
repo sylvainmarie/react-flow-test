@@ -14,64 +14,85 @@ import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
   Edge,
-  Node,
-  Panel,
+  Node
 } from "reactflow";
 import Modal from "./Modal";
 import UploadFile from "@/app/components/UploadFile";
 import { getReactFlowFromJson } from "@/utils/jsonToFlow";
 import { ExcelConvertedJson } from "@/app/types/interface";
 import { ToastContainer, toast } from "react-toastify";
-import { OutputJsonFromExcelToReactFlow } from "@/utils/jsonToFlow";
 
 import "reactflow/dist/style.css";
 
-type NodeType = "Group" | "input" | "output" | "default" | "resizeRotate";
+function convertReactFlowGraph2ELKGraph(array: any) {
+// source: https://stackoverflow.com/questions/15376251/hierarchical-json-from-flat-with-parent-id
+  const myMap: {[index: string]:any} = {}
 
-const getId = (nodesLength: number, type: NodeType) => {
-  return type === "Group"
-    ? `Group ${nodesLength + 1}`
-    : `Node ${nodesLength + 1}`;
-};
+  for(var i = 0; i < array.length; i++){
+      var obj = array[i]
+      
+      // Add the iterator node to the structure
+      if(!(obj.id in myMap)){
+          myMap[obj.id] = obj
+          myMap[obj.id].children = []
+          myMap[obj.data] = obj.data
+          myMap[obj.style] = obj.style
+          myMap[obj.id].width = obj.width || 100
+          myMap[obj.id].height = obj.height || 30
+      }
 
-const createLayout = async (formattedData: OutputJsonFromExcelToReactFlow) => {
-  const { formattedNodes, formattedEdges } = formattedData;
+      if(typeof myMap[obj.id].Name == 'undefined'){
+        myMap[obj.id].id = obj.id
+        myMap[obj.id].parentNode = obj.parentNode
+      }
+
+      var parentNode = obj.parentNode || '-';
+      if(!(parentNode in myMap)){
+        myMap[parentNode] = {}
+        myMap[parentNode].children = []
+      }
+
+      // Register the node as a child to its parent
+      myMap[parentNode].children.push(myMap[obj.id])
+  }
+  // return the node with no parent (= top hierarchy)
+  return myMap["-"].children;
+}
+
+function convertELKGraph2ReactFlowGraph(array: any) {
+
+  const nodes = array.reduce((result:any, current:any) => {
+    result.push({
+      id: current.id,
+      position: { x: current.x, y: current.y },
+      data: current.data,
+      style: { width: current.width, height: current.height },
+    });
+
+    if (current.children) {
+      current.children.forEach((child:any) =>
+        result.push({
+          id: child.id,
+          position: { x: child.x, y: child.y },
+          data: current.data,
+          style: { width: child.width, height: child.height },
+          parentNode: current.id,
+          extent: "parent",
+        })
+      );
+    }
+    return result;
+  }, []);
+
+  return nodes;
+}
+
+const createLayout = async (formattedData: any) => {
+
+  console.log("in createLayout");
+  console.log(formattedData);
 
   const elk = new ELK();
-
-  const groupNode = formattedNodes.filter((node: Node) => {
-    return node.type === "Group";
-  });
-  const noneGroupNode = formattedNodes.filter((node: Node) => {
-    return node.type !== "Group";
-  });
-
-  let graphChildren: any[] = [];
-  groupNode.forEach((group: Node) => {
-    let children: any[] = [];
-    noneGroupNode.forEach((node: Node) => {
-      if (node.parentNode === group.id) {
-        children.push({
-          id: node.id,
-          width: node.style?.width || 150,
-          height: node.style?.height || 50,
-          layoutOptions: {
-            "elk.direction": "DOWN",
-          },
-        });
-      }
-    });
-
-    graphChildren.push({
-      id: group.id,
-      width: 500,
-      height: 500,
-      layoutOptions: {
-        "elk.direction": "DOWN",
-      },
-      children: children,
-    });
-  });
 
   const graph = {
     id: "root",
@@ -79,46 +100,24 @@ const createLayout = async (formattedData: OutputJsonFromExcelToReactFlow) => {
       "elk.algorithm": "mrtree",
       "elk.direction": "DOWN"
     },
-    children: graphChildren,
-    edges: formattedEdges.map((edge: Edge) => ({
+    children: convertReactFlowGraph2ELKGraph(formattedData.nodes),
+    edges: formattedData.edges.map((edge: Edge) => ({
       id: edge.id,
       sources: [edge.source],
       targets: [edge.target],
     })),
   };
 
-  console.log(graph);
-
   const layout = await elk.layout(graph);
 
-  if (layout.children) {
-    const nodes = layout.children.reduce((result, current) => {
-      result.push({
-        id: current.id,
-        position: { x: current.x, y: current.y },
-        data: { label: current.id },
-        style: { width: current.width, height: current.height },
-      } as never);
 
-      if (current.children) {
-        current.children.forEach((child) =>
-          result.push({
-            id: child.id,
-            position: { x: child.x, y: child.y },
-            data: { label: child.id },
-            style: { width: child.width, height: child.height },
-            parentNode: current.id,
-          } as never)
-        );
-      }
-
-      return result;
-    }, []);
-
-    return {
-      nodes,
-      edges: formattedEdges,
-    };
+  return {
+    nodes: convertELKGraph2ReactFlowGraph(layout.children),
+    edges: layout.edges.map((edge: any) => ({
+      id: edge.id,
+      source: edge.sources[0],
+      target: edge.targets[0]
+    }))
   }
 }
 
@@ -179,8 +178,20 @@ const ReactFlowContainer = () => {
 
   //Activated when Sample data is used
   useEffect(() => {
-    setNodes(jsonFormattedData?.nodes);
-    setEdges(jsonFormattedData?.edges);
+    console.log("in useEffect 2");
+    
+    if (jsonFormattedData.nodes.length === 0) return;
+
+      console.log(jsonFormattedData);
+
+      createLayout(jsonFormattedData).then((res) => {
+        if (res) {
+          setNodes(res.nodes);
+          setEdges(res.edges);
+        } else {
+          toast.error("Someting went wrong.");
+        }
+      });
   }, [jsonFormattedData, setNodes, setEdges]);
   
   const closeModal = () => setChildrenModelIsOpen(false);
