@@ -54,7 +54,7 @@ const UploadFile: React.FC<UploadFileProps> = ({
             icon={FaRandom}
             onClick={() => handleExampleDataUpload(exampleJsonFormatted)}
           >
-            Start with example data and modify it
+            Use example data
           </Button>
         </div>
       </div>
