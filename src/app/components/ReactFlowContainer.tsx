@@ -77,7 +77,7 @@ const createLayout = async (formattedData: OutputJsonFromExcelToReactFlow) => {
     id: "root",
     layoutOptions: {
       "elk.algorithm": "mrtree",
-      "elk.direction": "DOWN",
+      "elk.direction": "DOWN"
     },
     children: graphChildren,
     edges: formattedEdges.map((edge: Edge) => ({
@@ -120,13 +120,14 @@ const createLayout = async (formattedData: OutputJsonFromExcelToReactFlow) => {
       edges: formattedEdges,
     };
   }
-};
+}
+
 const ReactFlowContainer = () => {
   // @ts-ignore
   const [nodes, setNodes] = useNodesState<Node[]>([]);
   const [edges, setEdges] = useEdgesState<Edge[]>([]);
-  const [isChildrenModelOpen, setChildrenModelIsOpen] =
-    useState<boolean>(false);
+
+  const [isChildrenModelOpen, setChildrenModelIsOpen] = useState<boolean>(false);
   const [childrenModal, setChildrenModal] = useState<React.ReactNode>(null);
   const [jsonData, setJsonData] = useState<ExcelConvertedJson>({
     nodes: [],
@@ -176,10 +177,12 @@ const ReactFlowContainer = () => {
     });
   }, [jsonData, setNodes, setEdges]);
 
+  //Activated when Sample data is used
   useEffect(() => {
     setNodes(jsonFormattedData?.nodes);
     setEdges(jsonFormattedData?.edges);
   }, [jsonFormattedData, setNodes, setEdges]);
+  
   const closeModal = () => setChildrenModelIsOpen(false);
   const openModal = () => setChildrenModelIsOpen(true);
 
@@ -187,6 +190,7 @@ const ReactFlowContainer = () => {
     (changes: any) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes]
   );
+
   const onEdgesChange = useCallback(
     (changes: any) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges]
