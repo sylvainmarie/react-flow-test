@@ -4,7 +4,7 @@ import { SiMicrosoftexcel } from "react-icons/si";
 import { BsFiletypeJson } from "react-icons/bs";
 import React from "react";
 import { UploadFileProps } from "@/app/types/interface";
-import { exampleJsonFormatted } from "@/data/exampleData";
+import { exampleJsonFormatted } from "@/data/subFlowData";
 import { Edge, Node } from "reactflow";
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@tremor/react";
 import { UploadExcel } from "@/app/components/uploadFile/UploadExcel";
